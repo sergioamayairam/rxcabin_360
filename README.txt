@@ -37,10 +37,4 @@ También puedes ejecutar:
 
    ./abrir_tour.sh
 
-CÓMO PUBLICARLO PARA QUE CUALQUIERA LO VEA
-Sube TODA la carpeta tour_360 a un servidor web, GitHub Pages, Apache, Nginx o similar.
-El archivo que se debe abrir es index.html.
 
-IMPORTANTE
-No es recomendable abrir index.html directamente con file:// porque algunos navegadores bloquean recursos locales.
-Lo fiable es abrirlo mediante http://, aunque sea con un servidor local.
