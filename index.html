@@ -8,48 +8,6 @@
     <script src="vendor/pannellum.js"></script>
 
     <style>
-        :root {
-            /* =====================================================
-               AJUSTES GENERALES DE LOS PUNTOS
-               ===================================================== */
-
-            --hotspot-size: 12px;
-            --hotspot-color-rgb: 0, 210, 255;
-            --hotspot-alpha: 0.50;
-
-            --hotspot-border-size: 1.3px;
-            --hotspot-border-rgb: 255, 255, 255;
-            --hotspot-border-alpha: 0.70;
-
-            --hotspot-glow-size: 10px;
-            --hotspot-glow-alpha: 0.80;
-
-            --hotspot-inner-glow-alpha: 0.55;
-
-            /* Solo escala el círculo interno, no el contenedor */
-            --hotspot-hover-scale: 1.35;
-
-            /* =====================================================
-               AJUSTES PARA MÓVILES / PANTALLAS TÁCTILES
-               ===================================================== */
-
-            --hotspot-mobile-size: 32px;
-            --hotspot-mobile-alpha: 0.78;
-
-            --hotspot-mobile-border-size: 2.5px;
-            --hotspot-mobile-border-alpha: 0.95;
-
-            --hotspot-mobile-glow-size: 22px;
-            --hotspot-mobile-glow-alpha: 1.0;
-
-            /* Área invisible clicable alrededor del punto */
-            --hotspot-click-area-desktop: 34px;
-            --hotspot-click-area-mobile: 64px;
-
-            /* Cartel flotante en escritorio */
-            --label-background-alpha: 0.80;
-        }
-
         html, body {
             margin: 0;
             padding: 0;
@@ -94,89 +52,76 @@
         }
 
         /* =====================================================
-           HOTSPOTS
+           HOTSPOTS ESTABLES
            =====================================================
-           .custom-hotspot es el área clicable invisible.
-           .custom-hotspot::before es el punto visual brillante.
-           Así no se desplaza al tocarlo o pasar el ratón.
+           No se usa transform: scale ni ::before.
+           El punto visible es el propio elemento clicable.
+           Así no desaparece ni se desplaza al pulsarlo.
            ===================================================== */
 
         .custom-hotspot {
-            width: var(--hotspot-click-area-desktop);
-            height: var(--hotspot-click-area-desktop);
-            border: none;
-            background: transparent;
-            box-shadow: none;
-            cursor: pointer;
-            opacity: 1;
-            position: relative;
-            animation: none;
-        }
-
-        .custom-hotspot::before {
-            content: "";
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: var(--hotspot-size);
-            height: var(--hotspot-size);
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            background: rgba(var(--hotspot-color-rgb), var(--hotspot-alpha));
-            border: var(--hotspot-border-size) solid rgba(var(--hotspot-border-rgb), var(--hotspot-border-alpha));
+            background: rgba(0, 210, 255, 0.68);
+            border: 2px solid rgba(255, 255, 255, 0.85);
             box-shadow:
-                0 0 var(--hotspot-glow-size) rgba(var(--hotspot-color-rgb), var(--hotspot-glow-alpha)),
-                inset 0 0 5px rgba(255,255,255,var(--hotspot-inner-glow-alpha));
-            transform: translate(-50%, -50%);
-            animation: hotspotPulse 2.2s infinite ease-in-out;
+                0 0 14px rgba(0, 210, 255, 0.95),
+                inset 0 0 5px rgba(255, 255, 255, 0.65);
+            cursor: pointer;
+            opacity: 0.95;
             transition:
-                width 0.15s ease,
-                height 0.15s ease,
+                opacity 0.15s ease,
                 box-shadow 0.15s ease,
                 background 0.15s ease;
-            pointer-events: none;
+            animation: hotspotPulseStable 2.2s infinite ease-in-out;
         }
 
-        .custom-hotspot:hover::before {
-            width: calc(var(--hotspot-size) * var(--hotspot-hover-scale));
-            height: calc(var(--hotspot-size) * var(--hotspot-hover-scale));
-            background: rgba(var(--hotspot-color-rgb), 0.78);
+        .custom-hotspot:hover {
+            opacity: 1;
+            background: rgba(0, 210, 255, 0.88);
+            box-shadow:
+                0 0 20px rgba(0, 210, 255, 1),
+                inset 0 0 6px rgba(255, 255, 255, 0.80);
         }
 
         .hotspot-label {
             display: none;
             position: absolute;
-            left: 30px;
-            top: 4px;
+            left: 26px;
+            top: -6px;
             min-width: 170px;
-            background: rgba(0,0,0,var(--label-background-alpha));
+            background: rgba(0, 0, 0, 0.80);
             color: white;
             padding: 7px 9px;
             border-radius: 7px;
             font-size: 12px;
             line-height: 1.25;
             pointer-events: none;
-            box-shadow: 0 0 8px rgba(0,0,0,0.6);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
         }
 
         .custom-hotspot:hover .hotspot-label {
             display: block;
         }
 
-        @keyframes hotspotPulse {
+        @keyframes hotspotPulseStable {
             0% {
                 box-shadow:
-                    0 0 6px rgba(var(--hotspot-color-rgb), 0.52),
-                    inset 0 0 5px rgba(255,255,255,var(--hotspot-inner-glow-alpha));
+                    0 0 8px rgba(0, 210, 255, 0.65),
+                    inset 0 0 5px rgba(255, 255, 255, 0.55);
             }
+
             50% {
                 box-shadow:
-                    0 0 14.5px rgba(var(--hotspot-color-rgb), var(--hotspot-glow-alpha)),
-                    inset 0 0 6px rgba(255,255,255,var(--hotspot-inner-glow-alpha));
+                    0 0 18px rgba(0, 210, 255, 1),
+                    inset 0 0 6px rgba(255, 255, 255, 0.75);
             }
+
             100% {
                 box-shadow:
-                    0 0 6px rgba(var(--hotspot-color-rgb), 0.52),
-                    inset 0 0 5px rgba(255,255,255,var(--hotspot-inner-glow-alpha));
+                    0 0 8px rgba(0, 210, 255, 0.65),
+                    inset 0 0 5px rgba(255, 255, 255, 0.55);
             }
         }
 
@@ -186,25 +131,19 @@
 
         @media (max-width: 900px), (pointer: coarse) {
             .custom-hotspot {
-                width: var(--hotspot-click-area-mobile) !important;
-                height: var(--hotspot-click-area-mobile) !important;
-            }
-
-            .custom-hotspot::before {
-                width: var(--hotspot-mobile-size) !important;
-                height: var(--hotspot-mobile-size) !important;
-                background: rgba(var(--hotspot-color-rgb), var(--hotspot-mobile-alpha)) !important;
-                border: var(--hotspot-mobile-border-size) solid rgba(var(--hotspot-border-rgb), var(--hotspot-mobile-border-alpha)) !important;
+                width: 36px !important;
+                height: 36px !important;
+                background: rgba(0, 210, 255, 0.80) !important;
+                border: 2.6px solid rgba(255, 255, 255, 0.95) !important;
                 box-shadow:
-                    0 0 var(--hotspot-mobile-glow-size) rgba(var(--hotspot-color-rgb), var(--hotspot-mobile-glow-alpha)),
-                    inset 0 0 8px rgba(255,255,255,0.75) !important;
-                animation: hotspotPulseMobile 2.2s infinite ease-in-out !important;
-                transform: translate(-50%, -50%) !important;
+                    0 0 24px rgba(0, 210, 255, 1),
+                    inset 0 0 8px rgba(255, 255, 255, 0.80) !important;
+                opacity: 1 !important;
+                animation: hotspotPulseStableMobile 2.2s infinite ease-in-out !important;
             }
 
-            .custom-hotspot:hover::before {
-                width: var(--hotspot-mobile-size) !important;
-                height: var(--hotspot-mobile-size) !important;
+            .custom-hotspot:hover {
+                background: rgba(0, 210, 255, 0.90) !important;
             }
 
             .hotspot-label {
@@ -221,21 +160,23 @@
                 display: none;
             }
 
-            @keyframes hotspotPulseMobile {
+            @keyframes hotspotPulseStableMobile {
                 0% {
                     box-shadow:
-                        0 0 14px rgba(var(--hotspot-color-rgb), 0.75),
-                        inset 0 0 7px rgba(255,255,255,0.70);
+                        0 0 14px rgba(0, 210, 255, 0.75),
+                        inset 0 0 7px rgba(255, 255, 255, 0.70);
                 }
+
                 50% {
                     box-shadow:
-                        0 0 26px rgba(var(--hotspot-color-rgb), 1.0),
-                        inset 0 0 8px rgba(255,255,255,0.80);
+                        0 0 28px rgba(0, 210, 255, 1),
+                        inset 0 0 8px rgba(255, 255, 255, 0.85);
                 }
+
                 100% {
                     box-shadow:
-                        0 0 14px rgba(var(--hotspot-color-rgb), 0.75),
-                        inset 0 0 7px rgba(255,255,255,0.70);
+                        0 0 14px rgba(0, 210, 255, 0.75),
+                        inset 0 0 7px rgba(255, 255, 255, 0.70);
                 }
             }
         }
@@ -734,11 +675,6 @@
             hotSpotDiv.appendChild(label);
 
             hotSpotDiv.addEventListener("click", function(e) {
-                e.stopPropagation();
-                openModal(args);
-            });
-
-            hotSpotDiv.addEventListener("touchend", function(e) {
                 e.stopPropagation();
                 openModal(args);
             });
