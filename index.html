@@ -26,13 +26,14 @@
 
             --hotspot-inner-glow-alpha: 0.55;
 
-            --hotspot-hover-scale: 1.45;
+            /* Solo escala el círculo interno, no el contenedor */
+            --hotspot-hover-scale: 1.35;
 
             /* =====================================================
                AJUSTES PARA MÓVILES / PANTALLAS TÁCTILES
                ===================================================== */
 
-            --hotspot-mobile-size: 28px;
+            --hotspot-mobile-size: 32px;
             --hotspot-mobile-alpha: 0.78;
 
             --hotspot-mobile-border-size: 2.5px;
@@ -41,9 +42,11 @@
             --hotspot-mobile-glow-size: 22px;
             --hotspot-mobile-glow-alpha: 1.0;
 
-            --hotspot-mobile-hover-scale: 1.25;
+            /* Área invisible clicable alrededor del punto */
+            --hotspot-click-area-desktop: 34px;
+            --hotspot-click-area-mobile: 64px;
 
-            /* Cartel flotante */
+            /* Cartel flotante en escritorio */
             --label-background-alpha: 0.80;
         }
 
@@ -90,7 +93,31 @@
             max-width: 260px;
         }
 
+        /* =====================================================
+           HOTSPOTS
+           =====================================================
+           .custom-hotspot es el área clicable invisible.
+           .custom-hotspot::before es el punto visual brillante.
+           Así no se desplaza al tocarlo o pasar el ratón.
+           ===================================================== */
+
         .custom-hotspot {
+            width: var(--hotspot-click-area-desktop);
+            height: var(--hotspot-click-area-desktop);
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            cursor: pointer;
+            opacity: 1;
+            position: relative;
+            animation: none;
+        }
+
+        .custom-hotspot::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
             width: var(--hotspot-size);
             height: var(--hotspot-size);
             border-radius: 50%;
@@ -99,22 +126,27 @@
             box-shadow:
                 0 0 var(--hotspot-glow-size) rgba(var(--hotspot-color-rgb), var(--hotspot-glow-alpha)),
                 inset 0 0 5px rgba(255,255,255,var(--hotspot-inner-glow-alpha));
-            cursor: pointer;
-            opacity: 0.92;
-            transition: transform 0.15s ease, opacity 0.15s ease;
+            transform: translate(-50%, -50%);
             animation: hotspotPulse 2.2s infinite ease-in-out;
+            transition:
+                width 0.15s ease,
+                height 0.15s ease,
+                box-shadow 0.15s ease,
+                background 0.15s ease;
+            pointer-events: none;
         }
 
-        .custom-hotspot:hover {
-            transform: scale(var(--hotspot-hover-scale));
-            opacity: 1.0;
+        .custom-hotspot:hover::before {
+            width: calc(var(--hotspot-size) * var(--hotspot-hover-scale));
+            height: calc(var(--hotspot-size) * var(--hotspot-hover-scale));
+            background: rgba(var(--hotspot-color-rgb), 0.78);
         }
 
         .hotspot-label {
             display: none;
             position: absolute;
-            left: 20px;
-            top: -9px;
+            left: 30px;
+            top: 4px;
             min-width: 170px;
             background: rgba(0,0,0,var(--label-background-alpha));
             color: white;
@@ -148,29 +180,35 @@
             }
         }
 
+        /* =====================================================
+           AJUSTE PARA MÓVIL
+           ===================================================== */
+
         @media (max-width: 900px), (pointer: coarse) {
             .custom-hotspot {
+                width: var(--hotspot-click-area-mobile) !important;
+                height: var(--hotspot-click-area-mobile) !important;
+            }
+
+            .custom-hotspot::before {
                 width: var(--hotspot-mobile-size) !important;
                 height: var(--hotspot-mobile-size) !important;
                 background: rgba(var(--hotspot-color-rgb), var(--hotspot-mobile-alpha)) !important;
                 border: var(--hotspot-mobile-border-size) solid rgba(var(--hotspot-border-rgb), var(--hotspot-mobile-border-alpha)) !important;
-                opacity: 1 !important;
                 box-shadow:
                     0 0 var(--hotspot-mobile-glow-size) rgba(var(--hotspot-color-rgb), var(--hotspot-mobile-glow-alpha)),
                     inset 0 0 8px rgba(255,255,255,0.75) !important;
                 animation: hotspotPulseMobile 2.2s infinite ease-in-out !important;
+                transform: translate(-50%, -50%) !important;
             }
 
-            .custom-hotspot:hover {
-                transform: scale(var(--hotspot-mobile-hover-scale)) !important;
+            .custom-hotspot:hover::before {
+                width: var(--hotspot-mobile-size) !important;
+                height: var(--hotspot-mobile-size) !important;
             }
 
             .hotspot-label {
-                left: 36px !important;
-                top: -10px !important;
-                font-size: 14px !important;
-                min-width: 190px !important;
-                padding: 9px 11px !important;
+                display: none !important;
             }
 
             #info {
@@ -201,6 +239,10 @@
                 }
             }
         }
+
+        /* =====================================================
+           VENTANA MODAL DE INFORMACIÓN
+           ===================================================== */
 
         #modalOverlay {
             display: none;
@@ -677,6 +719,12 @@
             }
         });
 
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Escape") {
+                closeModal();
+            }
+        });
+
         function createHotspot(hotSpotDiv, args) {
             hotSpotDiv.classList.add("custom-hotspot");
 
@@ -686,6 +734,11 @@
             hotSpotDiv.appendChild(label);
 
             hotSpotDiv.addEventListener("click", function(e) {
+                e.stopPropagation();
+                openModal(args);
+            });
+
+            hotSpotDiv.addEventListener("touchend", function(e) {
                 e.stopPropagation();
                 openModal(args);
             });
