@@ -8,6 +8,45 @@
     <script src="vendor/pannellum.js"></script>
 
     <style>
+        :root {
+            /* =====================================================
+               AJUSTES GENERALES DE LOS PUNTOS
+               ===================================================== */
+
+            --hotspot-size: 12px;
+            --hotspot-color-rgb: 0, 210, 255;
+            --hotspot-alpha: 0.50;
+
+            --hotspot-border-size: 1.3px;
+            --hotspot-border-rgb: 255, 255, 255;
+            --hotspot-border-alpha: 0.70;
+
+            --hotspot-glow-size: 10px;
+            --hotspot-glow-alpha: 0.80;
+
+            --hotspot-inner-glow-alpha: 0.55;
+
+            --hotspot-hover-scale: 1.45;
+
+            /* =====================================================
+               AJUSTES PARA MÓVILES / PANTALLAS TÁCTILES
+               ===================================================== */
+
+            --hotspot-mobile-size: 28px;
+            --hotspot-mobile-alpha: 0.78;
+
+            --hotspot-mobile-border-size: 2.5px;
+            --hotspot-mobile-border-alpha: 0.95;
+
+            --hotspot-mobile-glow-size: 22px;
+            --hotspot-mobile-glow-alpha: 1.0;
+
+            --hotspot-mobile-hover-scale: 1.25;
+
+            /* Cartel flotante */
+            --label-background-alpha: 0.80;
+        }
+
         html, body {
             margin: 0;
             padding: 0;
@@ -34,6 +73,7 @@
             border-radius: 8px;
             font-size: 13px;
             line-height: 1.35;
+            max-width: 360px;
         }
 
         #coords {
@@ -47,25 +87,26 @@
             border-radius: 8px;
             font-size: 13px;
             line-height: 1.35;
+            max-width: 260px;
         }
 
-        
         .custom-hotspot {
-            width: 12px;
-            height: 12px;
+            width: var(--hotspot-size);
+            height: var(--hotspot-size);
             border-radius: 50%;
-            background: rgba(0, 210, 255, 0.5);
-            border: 1.3px solid rgba(255, 255, 255, 0.7);
+            background: rgba(var(--hotspot-color-rgb), var(--hotspot-alpha));
+            border: var(--hotspot-border-size) solid rgba(var(--hotspot-border-rgb), var(--hotspot-border-alpha));
             box-shadow:
-                0 0 10px rgba(0, 210, 255, 0.8),
-                inset 0 0 5px rgba(255,255,255,0.55);
+                0 0 var(--hotspot-glow-size) rgba(var(--hotspot-color-rgb), var(--hotspot-glow-alpha)),
+                inset 0 0 5px rgba(255,255,255,var(--hotspot-inner-glow-alpha));
             cursor: pointer;
             opacity: 0.92;
             transition: transform 0.15s ease, opacity 0.15s ease;
+            animation: hotspotPulse 2.2s infinite ease-in-out;
         }
 
         .custom-hotspot:hover {
-            transform: scale(1.45);
+            transform: scale(var(--hotspot-hover-scale));
             opacity: 1.0;
         }
 
@@ -75,7 +116,7 @@
             left: 20px;
             top: -9px;
             min-width: 170px;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,var(--label-background-alpha));
             color: white;
             padding: 7px 9px;
             border-radius: 7px;
@@ -88,29 +129,78 @@
         .custom-hotspot:hover .hotspot-label {
             display: block;
         }
-    
+
         @keyframes hotspotPulse {
             0% {
                 box-shadow:
-                    0 0 6.0px rgba(0, 210, 255, 0.52),
-                    inset 0 0 5px rgba(255,255,255,0.55);
+                    0 0 6px rgba(var(--hotspot-color-rgb), 0.52),
+                    inset 0 0 5px rgba(255,255,255,var(--hotspot-inner-glow-alpha));
             }
             50% {
                 box-shadow:
-                    0 0 14.5px rgba(0, 210, 255, 0.8),
-                    inset 0 0 6px rgba(255,255,255,0.55);
+                    0 0 14.5px rgba(var(--hotspot-color-rgb), var(--hotspot-glow-alpha)),
+                    inset 0 0 6px rgba(255,255,255,var(--hotspot-inner-glow-alpha));
             }
             100% {
                 box-shadow:
-                    0 0 6.0px rgba(0, 210, 255, 0.52),
-                    inset 0 0 5px rgba(255,255,255,0.55);
+                    0 0 6px rgba(var(--hotspot-color-rgb), 0.52),
+                    inset 0 0 5px rgba(255,255,255,var(--hotspot-inner-glow-alpha));
             }
         }
 
-        .custom-hotspot {
-            animation: hotspotPulse 2.2s infinite ease-in-out;
+        @media (max-width: 900px), (pointer: coarse) {
+            .custom-hotspot {
+                width: var(--hotspot-mobile-size) !important;
+                height: var(--hotspot-mobile-size) !important;
+                background: rgba(var(--hotspot-color-rgb), var(--hotspot-mobile-alpha)) !important;
+                border: var(--hotspot-mobile-border-size) solid rgba(var(--hotspot-border-rgb), var(--hotspot-mobile-border-alpha)) !important;
+                opacity: 1 !important;
+                box-shadow:
+                    0 0 var(--hotspot-mobile-glow-size) rgba(var(--hotspot-color-rgb), var(--hotspot-mobile-glow-alpha)),
+                    inset 0 0 8px rgba(255,255,255,0.75) !important;
+                animation: hotspotPulseMobile 2.2s infinite ease-in-out !important;
+            }
+
+            .custom-hotspot:hover {
+                transform: scale(var(--hotspot-mobile-hover-scale)) !important;
+            }
+
+            .hotspot-label {
+                left: 36px !important;
+                top: -10px !important;
+                font-size: 14px !important;
+                min-width: 190px !important;
+                padding: 9px 11px !important;
+            }
+
+            #info {
+                font-size: 11px;
+                padding: 7px 9px;
+                max-width: 72vw;
+            }
+
+            #coords {
+                display: none;
+            }
+
+            @keyframes hotspotPulseMobile {
+                0% {
+                    box-shadow:
+                        0 0 14px rgba(var(--hotspot-color-rgb), 0.75),
+                        inset 0 0 7px rgba(255,255,255,0.70);
+                }
+                50% {
+                    box-shadow:
+                        0 0 26px rgba(var(--hotspot-color-rgb), 1.0),
+                        inset 0 0 8px rgba(255,255,255,0.80);
+                }
+                100% {
+                    box-shadow:
+                        0 0 14px rgba(var(--hotspot-color-rgb), 0.75),
+                        inset 0 0 7px rgba(255,255,255,0.70);
+                }
+            }
         }
-        
 
         #modalOverlay {
             display: none;
@@ -184,25 +274,6 @@
             border-radius: 8px;
             width: fit-content;
         }
-        @media (max-width: 768px) {
-    .custom-hotspot {
-        width: 24px;
-        height: 24px;
-        background: rgba(0, 210, 255, 0.70);
-        border: 2.2px solid rgba(255, 255, 255, 0.90);
-        box-shadow:
-            0 0 18px rgba(0, 210, 255, 0.95),
-            inset 0 0 7px rgba(255,255,255,0.70);
-    }
-
-    .hotspot-label {
-        left: 30px;
-        font-size: 14px;
-        min-width: 190px;
-        padding: 9px 11px;
-    }
-}
-        
     </style>
 </head>
 
@@ -238,259 +309,261 @@
     <script>
         const EDIT_MODE = true;
         const PREFERIR_MAXIMA_CALIDAD_COMPATIBLE = true;
+
         const HOTSPOTS = [
-    {
-        "id": "cuadro_electrico_principal",
-        "title": "Cuadro eléctrico principal",
-        "description": "Cuadro eléctrico principal de la instalación.",
-        "pitch": 4.68,
-        "yaw": 11.2,
-        "image": "assets/cuadro_electrico_principal.jpg",
-        "url": ""
-    },
-    {
-        "id": "second_ref_box",
-        "title": "2nd. Ref. Box",
-        "description": "Caja de segunda referencia.",
-        "pitch": 0.58,
-        "yaw": 30.8,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "addrets",
-        "title": "Addrets",
-        "description": "Módulo Addrets.",
-        "pitch": -8.7,
-        "yaw": 30.87,
-        "image": "assets/addrets.jpg",
-        "url": ""
-    },
-    {
-        "id": "rxss_box",
-        "title": "RxSS box",
-        "description": "Caja RxSS.",
-        "pitch": -17.45,
-        "yaw": 32.73,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "switch_lock_monitor",
-        "title": "Switch Lock Monitor",
-        "description": "Monitor de bloqueo del switch.",
-        "pitch": -24.33,
-        "yaw": 31.59,
-        "image": "assets/switch_lock_monitor.jpg",
-        "url": ""
-    },
-    {
-        "id": "chopper_unit",
-        "title": "Chopper Unit",
-        "description": "Unidad Chopper.",
-        "pitch": -30.42,
-        "yaw": 31.77,
-        "image": "assets/chopper_unit.jpg",
-        "url": ""
-    },
-    {
-        "id": "ps_lo_box",
-        "title": "P.S. LO Box",
-        "description": "Caja de alimentación del oscilador local.",
-        "pitch": -36.39,
-        "yaw": 30.45,
-        "image": "assets/ps_lo_box.jpg",
-        "url": ""
-    },
-    {
-        "id": "power_roof_chiller",
-        "title": "Power Roof Chiller",
-        "description": "Alimentación del chiller de cubierta.",
-        "pitch": 4.5,
-        "yaw": 21.63,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "remote_light_switch",
-        "title": "Remote Light switch",
-        "description": "Interruptor remoto de iluminación.",
-        "pitch": 10.94,
-        "yaw": -9.05,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "helium",
-        "title": "Helium",
-        "description": "Botella con helio.",
-        "pitch": -17.54,
-        "yaw": -102.51,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "intercom",
-        "title": "Intercom",
-        "description": "Sistema de intercomunicación.",
-        "pitch": 4.03,
-        "yaw": -122.61,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "antenna_temperature_control_cabinet",
-        "title": "Antenna temperature control cabinet",
-        "description": "Armario de control de temperatura de antena.",
-        "pitch": -16.7,
-        "yaw": -142.02,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "detallar_1",
-        "title": "Detallar_1",
-        "description": "Elemento pendiente de detallar.",
-        "pitch": -2.78,
-        "yaw": -173.22,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "dewar_nitrogen",
-        "title": "Dewar nitrogen",
-        "description": "Dewar de nitrógeno.",
-        "pitch": -25.89,
-        "yaw": 92.06,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "vme_vrx4",
-        "title": "VME VRX4",
-        "description": "Módulo o rack VME VRX4.",
-        "pitch": 0.48,
-        "yaw": 57.9,
-        "image": "assets/vme_vrx4.jpg",
-        "url": ""
-    },
-    {
-        "id": "vme_vac5",
-        "title": "VME VAC5",
-        "description": "Módulo o rack VME VAC5.",
-        "pitch": -8.17,
-        "yaw": 58.18,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "jukebox_control",
-        "title": "Jukebox control",
-        "description": "Control del sistema Jukebox.",
-        "pitch": -19.7,
-        "yaw": 54.76,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "m5",
-        "title": "M5",
-        "description": "Elemento M5.",
-        "pitch": 1.56,
-        "yaw": 97.73,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "m6",
-        "title": "M6",
-        "description": "Elemento M6.",
-        "pitch": 2.77,
-        "yaw": 92.7,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "m5_control_mov",
-        "title": "M5 control mov.",
-        "description": "Control de movimiento de M5.",
-        "pitch": 3.49,
-        "yaw": 89.75,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "chopper_wheel",
-        "title": "Chopper Wheel",
-        "description": "Rueda del chopper.",
-        "pitch": 11.42,
-        "yaw": 96.56,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "retorno_1_ventilation",
-        "title": "Retorno 1 Ventilation",
-        "description": "Retorno 1 de ventilación.",
-        "pitch": 15.91,
-        "yaw": 92.95,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "vertex_control",
-        "title": "Vertex Control",
-        "description": "Control Vertex.",
-        "pitch": 1.79,
-        "yaw": 136.17,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "yig_lo_ps",
-        "title": "YIG LO P.S.",
-        "description": "Fuente de alimentación YIG LO.",
-        "pitch": -34.52,
-        "yaw": 111.42,
-        "image": "",
-        "url": ""
-    },
-    {
-        "id": "crane",
-        "title": "Crane",
-        "description": "Grúa de la sala.",
-        "pitch": 11.72,
-        "yaw": 143.64,
-        "image": "assets/crane.jpg",
-        "url": ""
-    }
-];
+            {
+                "id": "cuadro_electrico_principal",
+                "title": "Cuadro eléctrico principal",
+                "description": "Cuadro eléctrico principal de la instalación.",
+                "pitch": 4.68,
+                "yaw": 11.2,
+                "image": "assets/cuadro_electrico_principal.jpg",
+                "url": ""
+            },
+            {
+                "id": "second_ref_box",
+                "title": "2nd. Ref. Box",
+                "description": "Caja de segunda referencia.",
+                "pitch": 0.58,
+                "yaw": 30.8,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "addrets",
+                "title": "Addrets",
+                "description": "Módulo Addrets.",
+                "pitch": -8.7,
+                "yaw": 30.87,
+                "image": "assets/addrets.jpg",
+                "url": ""
+            },
+            {
+                "id": "rxss_box",
+                "title": "RxSS box",
+                "description": "Caja RxSS.",
+                "pitch": -17.45,
+                "yaw": 32.73,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "switch_lock_monitor",
+                "title": "Switch Lock Monitor",
+                "description": "Monitor de bloqueo del switch.",
+                "pitch": -24.33,
+                "yaw": 31.59,
+                "image": "assets/switch_lock_monitor.jpg",
+                "url": ""
+            },
+            {
+                "id": "chopper_unit",
+                "title": "Chopper Unit",
+                "description": "Unidad Chopper.",
+                "pitch": -30.42,
+                "yaw": 31.77,
+                "image": "assets/chopper_unit.jpg",
+                "url": ""
+            },
+            {
+                "id": "ps_lo_box",
+                "title": "P.S. LO Box",
+                "description": "Caja de alimentación del oscilador local.",
+                "pitch": -36.39,
+                "yaw": 30.45,
+                "image": "assets/ps_lo_box.jpg",
+                "url": ""
+            },
+            {
+                "id": "power_roof_chiller",
+                "title": "Power Roof Chiller",
+                "description": "Alimentación del chiller de cubierta.",
+                "pitch": 4.5,
+                "yaw": 21.63,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "remote_light_switch",
+                "title": "Remote Light switch",
+                "description": "Interruptor remoto de iluminación.",
+                "pitch": 10.94,
+                "yaw": -9.05,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "helium",
+                "title": "Helium",
+                "description": "Botella con helio.",
+                "pitch": -17.54,
+                "yaw": -102.51,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "intercom",
+                "title": "Intercom",
+                "description": "Sistema de intercomunicación.",
+                "pitch": 4.03,
+                "yaw": -122.61,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "antenna_temperature_control_cabinet",
+                "title": "Antenna temperature control cabinet",
+                "description": "Armario de control de temperatura de antena.",
+                "pitch": -16.7,
+                "yaw": -142.02,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "detallar_1",
+                "title": "Detallar_1",
+                "description": "Elemento pendiente de detallar.",
+                "pitch": -2.78,
+                "yaw": -173.22,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "dewar_nitrogen",
+                "title": "Dewar nitrogen",
+                "description": "Dewar de nitrógeno.",
+                "pitch": -25.89,
+                "yaw": 92.06,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "vme_vrx4",
+                "title": "VME VRX4",
+                "description": "Módulo o rack VME VRX4.",
+                "pitch": 0.48,
+                "yaw": 57.9,
+                "image": "assets/vme_vrx4.jpg",
+                "url": ""
+            },
+            {
+                "id": "vme_vac5",
+                "title": "VME VAC5",
+                "description": "Módulo o rack VME VAC5.",
+                "pitch": -8.17,
+                "yaw": 58.18,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "jukebox_control",
+                "title": "Jukebox control",
+                "description": "Control del sistema Jukebox.",
+                "pitch": -19.7,
+                "yaw": 54.76,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "m5",
+                "title": "M5",
+                "description": "Elemento M5.",
+                "pitch": 1.56,
+                "yaw": 97.73,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "m6",
+                "title": "M6",
+                "description": "Elemento M6.",
+                "pitch": 2.77,
+                "yaw": 92.7,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "m5_control_mov",
+                "title": "M5 control mov.",
+                "description": "Control de movimiento de M5.",
+                "pitch": 3.49,
+                "yaw": 89.75,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "chopper_wheel",
+                "title": "Chopper Wheel",
+                "description": "Rueda del chopper.",
+                "pitch": 11.42,
+                "yaw": 96.56,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "retorno_1_ventilation",
+                "title": "Retorno 1 Ventilation",
+                "description": "Retorno 1 de ventilación.",
+                "pitch": 15.91,
+                "yaw": 92.95,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "vertex_control",
+                "title": "Vertex Control",
+                "description": "Control Vertex.",
+                "pitch": 1.79,
+                "yaw": 136.17,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "yig_lo_ps",
+                "title": "YIG LO P.S.",
+                "description": "Fuente de alimentación YIG LO.",
+                "pitch": -34.52,
+                "yaw": 111.42,
+                "image": "",
+                "url": ""
+            },
+            {
+                "id": "crane",
+                "title": "Crane",
+                "description": "Grúa de la sala.",
+                "pitch": 11.72,
+                "yaw": 143.64,
+                "image": "assets/crane.jpg",
+                "url": ""
+            }
+        ];
+
         const PANORAMA_VERSIONS = [
-    {
-        "name": "panorama_4096.jpg",
-        "width": 4096,
-        "height": 760,
-        "original": false
-    },
-    {
-        "name": "panorama_8192.jpg",
-        "width": 8192,
-        "height": 1519,
-        "original": false
-    },
-    {
-        "name": "panorama_12000.jpg",
-        "width": 12000,
-        "height": 2226,
-        "original": false
-    },
-    {
-        "name": "panorama_24769.jpg",
-        "width": 24769,
-        "height": 4594,
-        "original": true
-    }
-];
+            {
+                "name": "panorama_4096.jpg",
+                "width": 4096,
+                "height": 760,
+                "original": false
+            },
+            {
+                "name": "panorama_8192.jpg",
+                "width": 8192,
+                "height": 1519,
+                "original": false
+            },
+            {
+                "name": "panorama_12000.jpg",
+                "width": 12000,
+                "height": 2226,
+                "original": false
+            },
+            {
+                "name": "panorama_24769.jpg",
+                "width": 24769,
+                "height": 4594,
+                "original": true
+            }
+        ];
 
         function getMaxTextureSize() {
             try {
@@ -636,11 +709,11 @@
             showZoomCtrl: true,
             mouseZoom: true,
             hfov: 100,
-            
+
             haov: 360,
             vaov: 80,
             vOffset: 0,
-        
+
             hotSpots: buildHotspots()
         });
 
