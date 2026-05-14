@@ -48,6 +48,3 @@ También puedes ejecutar:
 
    ./abrir_tour.sh
 
-CÓMO PUBLICARLO
-Sube TODO el contenido de la carpeta tour_360 al repositorio de GitHub Pages.
-El archivo index.html debe quedar en la raíz del repositorio.
