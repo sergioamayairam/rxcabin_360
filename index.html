@@ -191,7 +191,8 @@
     <div id="info">
         Tour panorámico<br>
         Modo: panorámica parcial / cilíndrica<br>
-        Imagen: 24769 × 4594<br>
+        Imagen original: 24769 × 4594<br>
+        Cargando: <span id="selectedPanorama">...</span><br>
         Hotspots: 25
     </div>
 
@@ -217,6 +218,7 @@
 
     <script>
         const EDIT_MODE = true;
+        const PREFERIR_MAXIMA_CALIDAD_COMPATIBLE = true;
         const HOTSPOTS = [
     {
         "id": "cuadro_electrico_principal",
@@ -302,7 +304,7 @@
     {
         "id": "helium",
         "title": "Helium",
-        "description": "Zona o sistema relacionado con helio.",
+        "description": "Botella con helio.",
         "pitch": -17.54,
         "yaw": -102.51,
         "image": "",
@@ -444,6 +446,102 @@
         "url": ""
     }
 ];
+        const PANORAMA_VERSIONS = [
+    {
+        "name": "panorama_4096.jpg",
+        "width": 4096,
+        "height": 760,
+        "original": false
+    },
+    {
+        "name": "panorama_8192.jpg",
+        "width": 8192,
+        "height": 1519,
+        "original": false
+    },
+    {
+        "name": "panorama_12000.jpg",
+        "width": 12000,
+        "height": 2226,
+        "original": false
+    },
+    {
+        "name": "panorama_24769.jpg",
+        "width": 24769,
+        "height": 4594,
+        "original": true
+    }
+];
+
+        function getMaxTextureSize() {
+            try {
+                const canvas = document.createElement("canvas");
+                const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+
+                if (!gl) {
+                    return 4096;
+                }
+
+                return gl.getParameter(gl.MAX_TEXTURE_SIZE);
+            } catch (e) {
+                return 4096;
+            }
+        }
+
+        function chooseBestPanorama() {
+            const maxTexture = getMaxTextureSize();
+
+            let candidates = PANORAMA_VERSIONS.filter(p => {
+                return p.width <= maxTexture && p.height <= maxTexture;
+            });
+
+            candidates.sort((a, b) => a.width - b.width);
+
+            if (candidates.length === 0) {
+                const fallback = PANORAMA_VERSIONS[0];
+                return {
+                    panorama: fallback,
+                    maxTexture: maxTexture,
+                    reason: "fallback"
+                };
+            }
+
+            if (PREFERIR_MAXIMA_CALIDAD_COMPATIBLE) {
+                const chosen = candidates[candidates.length - 1];
+                return {
+                    panorama: chosen,
+                    maxTexture: maxTexture,
+                    reason: "maxima_calidad_compatible"
+                };
+            }
+
+            const viewportW = window.innerWidth * (window.devicePixelRatio || 1);
+            const desiredWidth = Math.max(4096, viewportW * 2.5);
+
+            let chosen = candidates[0];
+
+            for (const c of candidates) {
+                if (c.width <= desiredWidth) {
+                    chosen = c;
+                }
+            }
+
+            return {
+                panorama: chosen,
+                maxTexture: maxTexture,
+                reason: "adaptada_a_pantalla"
+            };
+        }
+
+        const selected = chooseBestPanorama();
+        const selectedPanorama = selected.panorama.name;
+
+        document.getElementById("selectedPanorama").textContent =
+            selectedPanorama +
+            " | límite WebGL: " + selected.maxTexture + " px";
+
+        console.log("Versiones disponibles:", PANORAMA_VERSIONS);
+        console.log("Panorama elegido:", selected);
 
         function openModal(args) {
             document.getElementById("modalTitle").textContent = args.title || "Objeto";
@@ -513,7 +611,7 @@
 
         const viewer = pannellum.viewer('panorama', {
             type: 'equirectangular',
-            panorama: 'panorama.jpg',
+            panorama: selectedPanorama,
             autoLoad: true,
             compass: true,
             showZoomCtrl: true,
@@ -541,7 +639,7 @@
                     "Coordenadas:<br>" +
                     "pitch: " + pitch + "<br>" +
                     "yaw: " + yaw + "<br><br>" +
-                    "point";
+                    "Copia estos valores en HOTSPOTS";
 
                 console.log({
                     pitch: Number(pitch),
